@@ -26,6 +26,16 @@ class AgentState:
     last_action: str = "idle"
     timestamp: float = 0.0
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
+
 class AgentClient:
     """Client for interacting with A2A server"""
     
@@ -40,7 +50,7 @@ class AgentClient:
         # Agent state
         self.state = AgentState(
             agent_id=agent_id,
-            position={"x": random.uniform(-10, 10), "y": random.uniform(-10, 10), "z": 0.0},
+            position={"x": float(random.uniform(-10, 10)), "y": float(random.uniform(-10, 10)), "z": 0.0},
             velocity={"x": 0.0, "y": 0.0, "z": 0.0},
             emotion="neutral"
         )
@@ -127,7 +137,7 @@ class AgentClient:
         
         try:
             # Send observation
-            await self.websocket.send(msgpack.packb(observation))
+            await self.websocket.send(json.dumps(observation, cls=NumpyEncoder))
             self.message_count += 1
             
             # Receive response
@@ -135,7 +145,7 @@ class AgentClient:
                 self.websocket.recv(), 
                 timeout=5.0
             )
-            response = msgpack.unpackb(response_data)
+            response = json.loads(response_data)
             
             return response
             

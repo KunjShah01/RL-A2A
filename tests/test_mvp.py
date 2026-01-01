@@ -110,7 +110,7 @@ class TestSecurity:
         
         for file_path in files_to_check:
             if Path(file_path).exists():
-                content = Path(file_path).read_text()
+                content = Path(file_path).read_text(encoding="utf-8")
                 # Should not contain actual API keys
                 assert "sk-" not in content or "your-" in content, f"Potential API key in {file_path}"
 

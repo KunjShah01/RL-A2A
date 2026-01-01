@@ -1,39 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-RL-A2A COMBINED: Complete Enhanced Agent-to-Agent Communication System
-=======================================================================
-
-COMPREHENSIVE VERSION: All features merged into one error-free file
-WINDOWS COMPATIBLE: All Unicode issues resolved
-ALL ERRORS FIXED: FastAPI routing, imports, dependencies
-
-FEATURES INCLUDED:
-[OK] Original RL-A2A all-in-one functionality
-[OK] Enhanced security (JWT, rate limiting, input validation) 
-[OK] Multi-AI provider support (OpenAI, Claude, Gemini)
-[OK] Comprehensive environment configuration (.env support)
-[OK] Advanced 3D visualization and monitoring dashboard
-[OK] Production-ready deployment features
-[OK] Enhanced reinforcement learning with experience replay
-[OK] MCP (Model Context Protocol) support
-[OK] Comprehensive logging and error handling
-[OK] WebSocket real-time communication
-[OK] REST API with comprehensive endpoints
-[OK] Automatic dependency management
-[OK] HTML report generation
-
-USAGE:
-python rla2a.py setup              # Setup environment and dependencies
-python rla2a.py server             # Start secure server 
-python rla2a.py dashboard          # Enhanced 3D dashboard
-python rla2a.py mcp                # MCP server for AI assistants
-python rla2a.py report             # Generate comprehensive HTML report
-
-Author: KUNJ SHAH
-GitHub: https://github.com/KunjShah01/RL-A2A
-Version: 4.0 Enhanced Combined - Windows Compatible - All Errors Fixed
-"""
-
 import asyncio
 import json
 import os
@@ -77,6 +41,12 @@ except ImportError:
 def check_and_install_dependencies():
     """Smart dependency management with enhanced features"""
     
+    # Core packages required for basic functionality
+    core_required = [
+        "fastapi", "uvicorn", "websockets", "msgpack", 
+        "numpy", "pydantic", "requests"
+    ]
+
     # Enhanced packages for security and features
     enhanced_packages = [
         "python-dotenv", "PyJWT", "bcrypt", "bleach", "passlib"
@@ -127,6 +97,8 @@ def check_and_install_dependencies():
             else:
                 __import__(pkg.replace("-", "_"))
         except ImportError:
+            missing_enhanced.append(pkg)
+
     # Check MCP packages
     for pkg in mcp_packages:
         try:
@@ -145,10 +117,15 @@ def check_and_install_dependencies():
             print(f"[MCP] MCP Support: {', '.join(missing_mcp)}")
 
         install_all = missing_enhanced + missing_ai + missing_mcp
-            print(f"[AI] AI Providers: {', '.join(missing_ai)}")
         
-        install_all = missing_enhanced + missing_ai
-        choice = input(f"Install enhanced packages? (y/N): ").lower().strip()
+        # Check for auto-install flag or CI environment
+        if os.getenv("RLA2A_AUTO_INSTALL", "false").lower() == "true" or os.getenv("CI"):
+            choice = "y"
+        else:
+            try:
+                choice = input(f"Install enhanced packages? (y/N): ").lower().strip()
+            except (EOFError, OSError):
+                choice = "n"
         
         if choice in ['y', 'yes']:
             try:
@@ -490,10 +467,12 @@ class A2ASystem:
         
         logger.info(f"[AI] {CONFIG['SYSTEM_NAME']} v{CONFIG['VERSION']} initialized")
     
-    def create_agent(self, name: str, role: str = "general", **kwargs) -> str:
+    def create_agent(self, name: str, role: str = "general", agent_id: str = None, **kwargs) -> str:
         """Create a new agent with enhanced capabilities"""
         
-        agent_id = str(uuid.uuid4())
+        if not agent_id:
+            agent_id = str(uuid.uuid4())
+            
         agent = Agent(
             id=agent_id,
             name=name,
@@ -619,6 +598,25 @@ class A2ASystem:
                 ]
             }
         
+        @app.post("/register")
+        async def register_agent(agent_id: str = None):
+            """Register an agent (compatibility endpoint)"""
+            if not agent_id:
+                agent_id = str(uuid.uuid4())
+            
+            # Create agent if it doesn't exist
+            if agent_id not in self.agents:
+                self.create_agent(
+                    name=f"Agent-{agent_id[:8]}", 
+                    role="external",
+                    agent_id=agent_id
+                )
+                logger.info(f"[REGISTER] Registered external agent: {agent_id}")
+            else:
+                logger.info(f"[REGISTER] Re-registered agent: {agent_id}")
+            
+            return {"session_id": agent_id, "status": "registered"}
+
         @app.post("/agents")
         async def create_agent_endpoint(agent_data: AgentCreate):
             agent_id = self.create_agent(
@@ -647,6 +645,7 @@ class A2ASystem:
         @app.get("/status")
         async def system_status():
             return {
+                "status": "operational",
                 "version": CONFIG["VERSION"],
                 "system_name": CONFIG["SYSTEM_NAME"],
                 "agents_count": len(self.agents),
@@ -660,6 +659,11 @@ class A2ASystem:
                 },
                 "uptime": time.time() - self.performance_monitor.start_time if hasattr(self, 'performance_monitor') else 0
             }
+
+        @app.get("/health")
+        async def health_check():
+            """Health check endpoint for monitoring"""
+            return await system_status()
         
         @app.post("/messages")
         async def send_message(message_data: MessageCreate):
@@ -674,6 +678,20 @@ class A2ASystem:
             
             await self.message_queue.put(message)
             return {"message_id": message.id, "status": "queued"}
+            
+        @app.post("/feedback")
+        async def receive_feedback(feedback: Dict[str, Any]):
+            """Receive RL feedback"""
+            agent_id = feedback.get("agent_id")
+            reward = feedback.get("reward")
+            action_id = feedback.get("action_id")
+            
+            logger.info(f"[RL] Feedback received from {agent_id}: Reward={reward} for Action={action_id}")
+            
+            if hasattr(self, 'learning_system'):
+                self.learning_system.update_agent_performance(agent_id, reward)
+                
+            return {"status": "received"}
         
         # Start message processing
         asyncio.create_task(self.process_messages())
@@ -694,6 +712,7 @@ class A2ASystem:
     
     async def process_messages(self):
         """Enhanced message processing with AI integration"""
+        import random
         
         while True:
             try:
@@ -723,6 +742,26 @@ class A2ASystem:
                         await self.connections[message.sender_id].send_text(
                             json.dumps(response_data)
                         )
+                elif message.receiver_id is None:
+                    # Environment interaction / RL
+                    # If message content is JSON-like (observation), return an action
+                    try:
+                        # For now, just return a random action
+                        actions = ["move_forward", "turn_left", "turn_right", "communicate", "observe"]
+                        action = random.choice(actions)
+                        
+                        response_data = {
+                            "command": action,
+                            "action_id": str(uuid.uuid4()),
+                            "timestamp": datetime.now().isoformat()
+                        }
+                        
+                        if message.sender_id in self.connections:
+                            await self.connections[message.sender_id].send_text(
+                                json.dumps(response_data)
+                            )
+                    except Exception as e:
+                        logger.error(f"[FAIL] RL processing error: {e}")
                 
                 self.message_queue.task_done()
                 
@@ -735,128 +774,23 @@ class A2ASystem:
 
 def start_dashboard():
     """Start the enhanced Streamlit dashboard"""
+    print("[LAUNCH] Starting enhanced dashboard...")
     
+    dashboard_path = Path("dashboard_app.py").absolute()
+    if not dashboard_path.exists():
+        print("[FAIL] dashboard_app.py not found!")
+        return
+
     try:
-        import streamlit as st
+        # Check if streamlit is installed
+        subprocess.run([sys.executable, "-m", "streamlit", "--version"], check=True, stdout=subprocess.DEVNULL)
         
-        # Configure page
-        st.set_page_config(
-            page_title="RL-A2A Enhanced Dashboard",
-            page_icon="[AI]",
-            layout="wide"
-        )
-        
-        st.title("[AI] RL-A2A Combined Enhanced Dashboard")
-        st.markdown("**Advanced Agent-to-Agent Communication System**")
-        
-        # System status
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric("Version", CONFIG["VERSION"])
-        
-        with col2:
-            st.metric("Security", "[OK]" if SECURITY_AVAILABLE else "[BASIC]")
-        
-        with col3:
-            ai_count = len([p for p in [OPENAI_AVAILABLE, ANTHROPIC_AVAILABLE, GOOGLE_AVAILABLE] if p])
-            st.metric("AI Providers", ai_count)
-        
-        with col4:
-            st.metric("Status", "[OK] Running")
-        
-        # Features overview
-        st.subheader("[LAUNCH] System Features")
-        
-        features = [
-            f"[{'OK' if FASTAPI_AVAILABLE else 'FAIL'}] FastAPI Server",
-            f"[{'OK' if SECURITY_AVAILABLE else 'BASIC'}] Enhanced Security",
-            f"[{'OK' if CONFIG['ENABLE_AI'] else 'NONE'}] AI Integration",
-            f"[{'OK' if VISUALIZATION_AVAILABLE else 'BASIC'}] Visualization",
-            f"[{'OK' if MCP_AVAILABLE else 'NONE'}] MCP Support"
-        ]
-        
-        for feature in features:
-            st.write(f"- {feature}")
-        
-        # AI Provider status
-        st.subheader("[AI] AI Provider Status")
-        
-        providers_status = {
-            "OpenAI": OPENAI_AVAILABLE,
-            "Anthropic": ANTHROPIC_AVAILABLE,
-            "Google": GOOGLE_AVAILABLE
-        }
-        
-        for provider, available in providers_status.items():
-            status = "[OK]" if available else "[NONE]"
-            st.write(f"- {provider}: {status}")
-        
-        # Quick actions
-        st.subheader("[LAUNCH] Quick Actions")
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            if st.button("[LAUNCH] Start Server"):
-                st.code("python rla2a.py server")
-                st.success("Copy and run the command above")
-        
-        with col2:
-            if st.button("[AI] Create Demo Agents"):
-                st.code("python rla2a.py server --demo-agents 3")
-                st.success("Copy and run the command above")
-        
-        with col3:
-            if st.button("[DOCS] Generate Report"):
-                st.code("python rla2a.py report")
-                st.success("Copy and run the command above")
-        
-        # Configuration
-        st.subheader("[SECURITY] Configuration")
-        
-        config_display = {
-            "Host": CONFIG["SERVER_HOST"],
-            "Port": CONFIG["SERVER_PORT"],
-            "Max Agents": CONFIG["MAX_AGENTS"],
-            "Debug Mode": CONFIG["DEBUG"]
-        }
-        
-        for key, value in config_display.items():
-            st.write(f"- {key}: {value}")
-        
-        # API Endpoints
-        st.subheader("[API] Available Endpoints")
-        
-        if FASTAPI_AVAILABLE:
-            endpoints = [
-                "GET / - System information",
-                "GET /agents - List all agents",
-                "POST /agents - Create new agent",
-                "GET /agents/{id} - Get agent details",
-                "GET /status - System status",
-                "POST /messages - Send message",
-                "WS /ws/{agent_id} - WebSocket connection"
-            ]
-            
-            for endpoint in endpoints:
-                st.write(f"- {endpoint}")
-        else:
-            st.error("FastAPI not available. Install with: pip install fastapi uvicorn")
-        
-    except ImportError:
-        print("[FAIL] Streamlit not available. Install with: pip install streamlit")
-        print("[LAUNCH] Starting basic dashboard...")
-        
-        # Basic dashboard fallback
-        print("\\n" + "="*60)
-        print(f"[AI] {CONFIG['SYSTEM_NAME']} v{CONFIG['VERSION']}")
-        print("="*60)
-        print(f"[OK] FastAPI: {'Available' if FASTAPI_AVAILABLE else 'Not Available'}")
-        print(f"[OK] Security: {'Enhanced' if SECURITY_AVAILABLE else 'Basic'}")
-        print(f"[AI] AI Providers: {len([p for p in [OPENAI_AVAILABLE, ANTHROPIC_AVAILABLE, GOOGLE_AVAILABLE] if p])}")
-        print(f"[LAUNCH] Server: {CONFIG['SERVER_HOST']}:{CONFIG['SERVER_PORT']}")
-        print("="*60)
+        # Run dashboard
+        print(f"[LAUNCH] Opening dashboard from {dashboard_path}")
+        subprocess.run([sys.executable, "-m", "streamlit", "run", str(dashboard_path)])
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("[FAIL] Streamlit not found. Please install it with:")
+        print("pip install streamlit")
 
 # =============================================================================
 # ADDITIONAL COMPONENTS
@@ -1171,6 +1105,37 @@ async def run_mcp_server():
         print("[DOCS] Documentation: python rla2a.py --help")
         return
     
+async def main():
+    parser = argparse.ArgumentParser(description="RL-A2A: Agent-to-Agent Communication System")
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
+    
+    # Setup command
+    subparsers.add_parser("setup", help="Setup environment and dependencies")
+    
+    # Server command
+    server_parser = subparsers.add_parser("server", help="Start secure server")
+    server_parser.add_argument("--host", default=CONFIG["SERVER_HOST"], help="Server host")
+    server_parser.add_argument("--port", type=int, default=CONFIG["SERVER_PORT"], help="Server port")
+    server_parser.add_argument("--demo-agents", type=int, default=0, help="Number of demo agents to create")
+    
+    # Dashboard command
+    subparsers.add_parser("dashboard", help="Start enhanced dashboard")
+    
+    # Report command
+    subparsers.add_parser("report", help="Generate HTML report")
+    
+    # MCP command
+    subparsers.add_parser("mcp", help="Run MCP server")
+    
+    # Info command
+    subparsers.add_parser("info", help="Show system information")
+    
+    args = parser.parse_args()
+    
+    if not args.command:
+        parser.print_help()
+        return
+
     try:
         if args.command == "setup":
             setup_environment()

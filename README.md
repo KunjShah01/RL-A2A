@@ -5,31 +5,35 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
 
-**The Future of Agent Interaction is Here! 🤖✨**
+## The Future of Agent Interaction is Here! 🤖✨
 
 RL-A2A is a revolutionary protocol enabling seamless communication between AI agents with reinforcement learning optimization, now featuring a **live marketplace**, **advanced analytics**, and **extensible plugin system**.
 
 ## 🌟 **NEW: Live Features Available!**
 
 ### 🏪 **Agent Marketplace**
+
 - Community-shared agents with ratings & reviews
 - One-click installation and version management
 - Search by category, tags, and popularity
 - Secure agent validation and distribution
 
 ### 📊 **Advanced Analytics**
+
 - Real-time usage metrics and performance monitoring
 - Agent behavior analysis and optimization insights
 - Predictive analytics for system scaling
 - Comprehensive reporting and data export
 
 ### 🔌 **Plugin System**
+
 - Hot-swappable plugins without server restart
 - Secure plugin execution with sandboxing
 - Plugin marketplace integration
 - Dependency management and version control
 
 ### 📈 **Live Dashboard**
+
 - Real-time monitoring with WebSocket updates
 - Interactive charts and visualizations
 - System health monitoring with alerts
@@ -52,16 +56,18 @@ chmod +x scripts/deploy.sh
 # 📚 API Docs: http://localhost:8000/docs
 ```
 
-**That's it! Your RL-A2A system is now live with all features enabled! 🎉**
+## 🏁 That's it! Your RL-A2A system is now live with all features enabled! 🎉
 
 ## 🚀 **Deployment Options**
 
 ### **Local Development**
+
 ```bash
 ./scripts/deploy.sh local
 ```
 
 ### **Cloud Deployment**
+
 ```bash
 # Vercel (Recommended)
 ./scripts/deploy.sh vercel
@@ -74,6 +80,7 @@ chmod +x scripts/deploy.sh
 ```
 
 ### **Docker**
+
 ```bash
 docker-compose up -d
 ```
@@ -81,18 +88,21 @@ docker-compose up -d
 ## 🎯 **Core Features**
 
 ### **🤖 Agent Communication**
+
 - **Multi-Protocol Support**: HTTP, WebSocket, gRPC
 - **Intelligent Routing**: Dynamic agent discovery and load balancing
 - **Message Queuing**: Reliable delivery with retry mechanisms
 - **Security**: End-to-end encryption and authentication
 
 ### **🧠 Reinforcement Learning**
+
 - **Q-Learning Optimization**: Adaptive communication strategies
 - **Performance Metrics**: Real-time learning and adaptation
 - **Multi-Agent Coordination**: Collaborative problem solving
 - **Experience Replay**: Learning from historical interactions
 
 ### **🔧 Production Ready**
+
 - **Scalable Architecture**: Horizontal scaling support
 - **Health Monitoring**: Comprehensive system diagnostics
 - **Rate Limiting**: Protection against abuse
@@ -101,24 +111,28 @@ docker-compose up -d
 ## 📊 **Live Dashboard Features**
 
 ### **Real-time Monitoring**
+
 - Active sessions and user engagement
 - Response times and performance metrics
 - System health and alert management
 - Agent usage statistics and trends
 
 ### **Agent Marketplace**
+
 - Browse and search community agents
 - Install agents with one click
 - Rate and review agent performance
 - Version management and updates
 
 ### **Plugin Management**
+
 - Load/unload plugins dynamically
 - Monitor plugin health and status
 - Install from marketplace
 - Custom plugin development
 
 ### **Analytics & Insights**
+
 - Usage patterns and optimization recommendations
 - Performance bottleneck identification
 - Growth metrics and trend analysis
@@ -127,7 +141,8 @@ docker-compose up -d
 ## 🔌 **API Endpoints**
 
 ### **Core API**
-```
+
+```json
 GET  /                          # Main application
 GET  /dashboard                 # Live dashboard
 GET  /health                    # Health check
@@ -136,7 +151,8 @@ POST /api/agents/interact       # Agent interaction
 ```
 
 ### **Live Features API**
-```
+
+```json
 GET  /api/live/dashboard        # Dashboard data
 GET  /api/live/marketplace/search # Search agents
 POST /api/live/marketplace/install/{id} # Install agent
@@ -146,13 +162,15 @@ GET  /api/live/analytics/{range} # Usage analytics
 ```
 
 ### **WebSocket**
-```
+
+```json
 ws://localhost:8000/ws          # Real-time updates
 ```
 
 ## 🛠 **Development**
 
 ### **Enhanced Server**
+
 ```bash
 # Run with live features
 python enhanced_server.py --reload
@@ -162,6 +180,7 @@ python a2a_server.py
 ```
 
 ### **Custom Agent Development**
+
 ```python
 # Create and publish agent
 agent_data = {
@@ -176,6 +195,7 @@ await marketplace.publish_agent(agent_data)
 ```
 
 ### **Plugin Development**
+
 ```python
 from plugins.plugin_system import PluginInterface, PluginMetadata
 
@@ -210,12 +230,14 @@ class MyPlugin(PluginInterface):
 ## 📈 **Performance & Scaling**
 
 ### **Optimization Features**
+
 - **Caching**: Redis-based caching for improved performance
 - **Load Balancing**: Distribute traffic across multiple instances
 - **Database Optimization**: Efficient data storage and retrieval
 - **CDN Support**: Static asset delivery optimization
 
 ### **Monitoring & Alerts**
+
 - **Real-time Metrics**: Performance and usage monitoring
 - **Health Checks**: Automated system health verification
 - **Alert System**: Proactive issue notification
@@ -224,18 +246,21 @@ class MyPlugin(PluginInterface):
 ## 🌐 **Use Cases**
 
 ### **Enterprise Applications**
+
 - **Customer Service**: Multi-agent customer support systems
 - **Data Processing**: Distributed data analysis pipelines
 - **Workflow Automation**: Intelligent business process automation
 - **Decision Support**: Collaborative AI decision making
 
 ### **Research & Development**
+
 - **Multi-Agent Systems**: Research platform for agent coordination
 - **AI Experimentation**: Testing ground for new AI algorithms
 - **Simulation Environments**: Complex system modeling
 - **Educational Tools**: Learning platform for AI concepts
 
 ### **Community Projects**
+
 - **Open Source AI**: Collaborative AI development
 - **Agent Sharing**: Community-driven agent marketplace
 - **Plugin Ecosystem**: Extensible functionality platform
@@ -262,6 +287,7 @@ We welcome contributions! Here's how to get started:
 6. **Open a Pull Request**
 
 ### **Development Setup**
+
 ```bash
 # Clone and setup
 git clone https://github.com/KunjShah01/RL-A2A.git
@@ -313,4 +339,4 @@ cd RL-A2A
 ./scripts/deploy.sh local
 ```
 
-**Visit http://localhost:8000/dashboard to explore your live RL-A2A system! 🚀**
+**Visit <http://localhost:8000/dashboard> to explore your live RL-A2A system! 🚀**

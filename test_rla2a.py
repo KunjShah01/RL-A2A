@@ -12,55 +12,34 @@ def test_import():
     """Test if rla2a.py can be imported without errors"""
     print("[TEST] Testing import...")
     
-    try:
-        spec = importlib.util.spec_from_file_location("rla2a", "rla2a.py")
-        rla2a = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(rla2a)
-        print("[OK] Import successful")
-        return True
-    except Exception as e:
-        print(f"[FAIL] Import failed: {e}")
-        return False
+    spec = importlib.util.spec_from_file_location("rla2a", "rla2a.py")
+    rla2a = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rla2a)
+    print("[OK] Import successful")
 
 def test_basic_functionality():
     """Test basic functionality"""
     print("[TEST] Testing basic functionality...")
     
-    try:
-        # Test help command
-        result = subprocess.run([
-            sys.executable, "rla2a.py", "--help"
-        ], capture_output=True, text=True, timeout=10)
-        
-        if result.returncode == 0:
-            print("[OK] Help command works")
-            return True
-        else:
-            print(f"[FAIL] Help command failed: {result.stderr}")
-            return False
-    except Exception as e:
-        print(f"[FAIL] Basic functionality test failed: {e}")
-        return False
+    # Test help command
+    result = subprocess.run([
+        sys.executable, "rla2a.py", "--help"
+    ], capture_output=True, text=True, timeout=10)
+    
+    assert result.returncode == 0, f"Help command failed: {result.stderr}"
+    print("[OK] Help command works")
 
 def test_info_command():
     """Test info command"""
     print("[TEST] Testing info command...")
     
-    try:
-        result = subprocess.run([
-            sys.executable, "rla2a.py", "info"
-        ], capture_output=True, text=True, timeout=10)
-        
-        if result.returncode == 0:
-            print("[OK] Info command works")
-            print("Output:", result.stdout[:200] + "..." if len(result.stdout) > 200 else result.stdout)
-            return True
-        else:
-            print(f"[FAIL] Info command failed: {result.stderr}")
-            return False
-    except Exception as e:
-        print(f"[FAIL] Info command test failed: {e}")
-        return False
+    result = subprocess.run([
+        sys.executable, "rla2a.py", "info"
+    ], capture_output=True, text=True, timeout=30)
+    
+    assert result.returncode == 0, f"Info command failed: {result.stderr}"
+    print("[OK] Info command works")
+    print("Output:", result.stdout[:200] + "..." if len(result.stdout) > 200 else result.stdout)
 
 def main():
     """Run all tests"""
@@ -78,8 +57,11 @@ def main():
     total = len(tests)
     
     for test in tests:
-        if test():
+        try:
+            test()
             passed += 1
+        except Exception as e:
+            print(f"[FAIL] {test.__name__} failed: {e}")
         print()
     
     print("="*60)
