@@ -70,7 +70,7 @@ This roadmap outlines the strategic direction for RL-A2A over the next 6 months,
 - [ ] Redis cluster setup
 - [ ] Load balancer optimization
 
-#### Success Metrics
+## Success Metrics
 
 - ✅ Deploy to 3+ cloud providers
 - ✅ Auto-scale 0-100 instances in < 5 minutes

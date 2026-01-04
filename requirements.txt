@@ -16,6 +16,7 @@ limits>=3.5.0
 bleach>=6.0.0
 python-jose>=3.3.0
 passlib>=1.7.4
+cryptography>=41.0.0
 
 # AI Providers
 openai>=1.12.0
