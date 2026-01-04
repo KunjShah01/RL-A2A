@@ -58,3 +58,5 @@ except ImportError:
             self.plugin_manager = plugin_manager
             self.shared_data = {}
 
+
+

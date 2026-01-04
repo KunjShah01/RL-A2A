@@ -231,3 +231,5 @@ class CrossProtocolAdapterPlugin(PluginInterface):
         self._logger.info("Cross-Protocol Adapter plugin cleaned up")
         return True
 
+
+

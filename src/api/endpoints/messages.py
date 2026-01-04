@@ -78,3 +78,5 @@ async def jsonrpc_endpoint(
     else:
         return {"jsonrpc": "2.0", "error": {"code": -32600, "message": "Invalid request"}, "id": request_data.id}
 
+
+

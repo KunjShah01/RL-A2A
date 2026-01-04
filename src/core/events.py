@@ -181,3 +181,5 @@ class EventBus:
         """Clear event history"""
         self._event_history.clear()
 
+
+

@@ -88,3 +88,5 @@ async def search_by_capability(
     manifests = manifest_service.find_agents_by_capability(capability)
     return {"capability": capability, "agents": manifests}
 
+
+

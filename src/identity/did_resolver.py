@@ -169,3 +169,5 @@ class DIDResolver:
             # Return first method
             return verification_methods[0]
 
+
+
