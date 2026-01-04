@@ -3,6 +3,7 @@ Reinforcement Learning Engine
 Main RL engine coordinating Q-Learning, rewards, and FRL
 """
 
+import asyncio
 import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
