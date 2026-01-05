@@ -71,7 +71,7 @@ async def jsonrpc_endpoint(
     from src.protocols.jsonrpc import JSONRPCResponse
     
     # Handle JSON-RPC request
-    response = await a2a_handler.handle_request(request_data.dict())
+    response = await a2a_handler.handle_request(request_data.model_dump())
     
     if response:
         return response.to_dict()

@@ -1,0 +1,654 @@
+openapi: 3.1.0
+info:
+  title: RL-A2A v2.0
+  description: Reinforcement Learning Agent-to-Agent Communication Platform
+  version: 2.0.0
+paths:
+  /api/v1/agents:
+    get:
+      tags:
+      - agents
+      summary: List Agents
+      description: List all agents
+      operationId: list_agents_api_v1_agents_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AgentResponse'
+                type: array
+                title: Response List Agents Api V1 Agents Get
+    post:
+      tags:
+      - agents
+      summary: Create Agent
+      description: Create a new agent
+      operationId: create_agent_api_v1_agents_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/agents/{agent_id}:
+    get:
+      tags:
+      - agents
+      summary: Get Agent
+      description: Get agent by ID
+      operationId: get_agent_api_v1_agents__agent_id__get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - agents
+      summary: Delete Agent
+      description: Delete an agent
+      operationId: delete_agent_api_v1_agents__agent_id__delete
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/messages/send:
+    post:
+      tags:
+      - messages
+      summary: Send Message
+      description: Send a message (REST endpoint)
+      operationId: send_message_api_v1_messages_send_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageSendRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/messages/jsonrpc:
+    post:
+      tags:
+      - messages
+      summary: Jsonrpc Endpoint
+      description: JSON-RPC 2.0 endpoint
+      operationId: jsonrpc_endpoint_api_v1_messages_jsonrpc_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JSONRPCRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/manifests/{agent_id}:
+    get:
+      tags:
+      - manifests
+      summary: Get Manifest
+      description: Get agent manifest
+      operationId: get_manifest_api_v1_manifests__agent_id__get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - manifests
+      summary: Create Manifest
+      description: Create or update agent manifest
+      operationId: create_manifest_api_v1_manifests__agent_id__post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestCreateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/manifests/search/capability/{capability}:
+    get:
+      tags:
+      - manifests
+      summary: Search By Capability
+      description: Search agents by capability
+      operationId: search_by_capability_api_v1_manifests_search_capability__capability__get
+      parameters:
+      - name: capability
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Capability
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflows:
+    get:
+      tags:
+      - workflows
+      summary: List Workflows
+      description: List all workflows
+      operationId: list_workflows_api_v1_workflows_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties: true
+                  type: object
+                type: array
+                title: Response List Workflows Api V1 Workflows Get
+    post:
+      tags:
+      - workflows
+      summary: Create Workflow
+      description: Create a workflow
+      operationId: create_workflow_api_v1_workflows_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Create Workflow Api V1 Workflows Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflows/{workflow_id}/execute:
+    post:
+      tags:
+      - workflows
+      summary: Execute Workflow
+      description: Execute a workflow
+      operationId: execute_workflow_api_v1_workflows__workflow_id__execute_post
+      parameters:
+      - name: workflow_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Workflow Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - type: object
+                additionalProperties: true
+              - type: 'null'
+              title: Initial Context
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/frl/stats/{agent_id}:
+    get:
+      tags:
+      - frl
+      summary: Get Agent Stats
+      description: Get RL statistics for an agent
+      operationId: get_agent_stats_api_v1_frl_stats__agent_id__get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/frl/aggregate/{agent_id}:
+    post:
+      tags:
+      - frl
+      summary: Aggregate Updates
+      description: Trigger FRL aggregation for an agent
+      operationId: aggregate_updates_api_v1_frl_aggregate__agent_id__post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hitl/pending:
+    get:
+      tags:
+      - hitl
+      summary: List Pending Approvals
+      description: List pending approval requests
+      operationId: list_pending_approvals_api_v1_hitl_pending_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/hitl/approve:
+    post:
+      tags:
+      - hitl
+      summary: Approve Request
+      description: Approve or reject a request
+      operationId: approve_request_api_v1_hitl_approve_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalActionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /:
+    get:
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /health:
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /openapi.yaml:
+    get:
+      summary: Openapi Yaml
+      description: Return the OpenAPI schema as YAML (falls back to JSON if PyYAML
+        missing).
+      operationId: openapi_yaml_openapi_yaml_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    AgentCreateRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        role:
+          type: string
+          title: Role
+          default: general
+        ai_provider:
+          type: string
+          title: Ai Provider
+          default: openai
+        capabilities:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Capabilities
+      type: object
+      required:
+      - name
+      title: AgentCreateRequest
+    AgentResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        did:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Did
+        name:
+          type: string
+          title: Name
+        role:
+          type: string
+          title: Role
+        status:
+          type: string
+          title: Status
+        capabilities:
+          items:
+            type: string
+          type: array
+          title: Capabilities
+        ai_provider:
+          type: string
+          title: Ai Provider
+      type: object
+      required:
+      - id
+      - did
+      - name
+      - role
+      - status
+      - capabilities
+      - ai_provider
+      title: AgentResponse
+    ApprovalActionRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        action:
+          type: string
+          title: Action
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        approver_id:
+          type: string
+          title: Approver Id
+      type: object
+      required:
+      - request_id
+      - action
+      - approver_id
+      title: ApprovalActionRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    JSONRPCRequest:
+      properties:
+        jsonrpc:
+          type: string
+          title: Jsonrpc
+          default: '2.0'
+        method:
+          type: string
+          title: Method
+        params:
+          additionalProperties: true
+          type: object
+          title: Params
+        id:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Id
+      type: object
+      required:
+      - method
+      - params
+      title: JSONRPCRequest
+    ManifestCreateRequest:
+      properties:
+        capabilities:
+          items:
+            type: string
+          type: array
+          title: Capabilities
+        schemas:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Schemas
+        metrics:
+          anyOf:
+          - additionalProperties:
+              type: number
+            type: object
+          - type: 'null'
+          title: Metrics
+        endpoints:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Endpoints
+        version:
+          type: string
+          title: Version
+          default: 1.0.0
+      type: object
+      required:
+      - capabilities
+      title: ManifestCreateRequest
+    MessageSendRequest:
+      properties:
+        sender_id:
+          type: string
+          title: Sender Id
+        receiver_id:
+          type: string
+          title: Receiver Id
+        content:
+          title: Content
+        message_type:
+          type: string
+          title: Message Type
+          default: text
+        priority:
+          type: integer
+          title: Priority
+          default: 2
+      type: object
+      required:
+      - sender_id
+      - receiver_id
+      - content
+      title: MessageSendRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WorkflowCreateRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        steps:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Steps
+      type: object
+      required:
+      - name
+      - steps
+      title: WorkflowCreateRequest

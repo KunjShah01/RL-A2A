@@ -124,6 +124,44 @@ def create_app() -> FastAPI:
             "agents_count": agent_registry.count(),
             "version": Config.VERSION
         }
+
+    # Provide OpenAPI YAML endpoint for SDK generation
+    @app.get("/openapi.yaml")
+    async def openapi_yaml():
+        """Return the OpenAPI schema as YAML (falls back to JSON if PyYAML missing)."""
+        schema = app.openapi()
+        try:
+            import yaml
+
+            yaml_text = yaml.safe_dump(schema, sort_keys=False)
+            from fastapi.responses import Response
+
+            return Response(content=yaml_text, media_type="application/x-yaml")
+        except Exception:
+            # PyYAML not installed — return JSON but with YAML content-type
+            import json
+            from fastapi.responses import Response
+
+            return Response(content=json.dumps(schema, indent=2), media_type="application/x-yaml")
+
+    # Export OpenAPI to docs/openapi.yaml if possible (helpful for SDK generation)
+    try:
+        schema = app.openapi()
+        import json
+        from pathlib import Path
+        docs_dir = Path("docs")
+        docs_dir.mkdir(parents=True, exist_ok=True)
+        openapi_path = docs_dir / "openapi.yaml"
+        try:
+            import yaml
+            with open(openapi_path, "w", encoding="utf-8") as f:
+                yaml.safe_dump(schema, f, sort_keys=False)
+        except Exception:
+            # Fallback to JSON file if YAML not available
+            with open(docs_dir / "openapi.json", "w", encoding="utf-8") as f:
+                json.dump(schema, f, indent=2)
+    except Exception:
+        logger.warning("Failed to export OpenAPI schema to docs/")
     
     logger.info("FastAPI application created successfully")
     

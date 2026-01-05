@@ -28,7 +28,7 @@ setup(
     python_requires=">=3.8",
     entry_points={
         "console_scripts": [
-            "rla2a=main:main",
+            "rla2a=main:cli",
         ],
     },
     classifiers=[

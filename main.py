@@ -53,4 +53,15 @@ if __name__ == "__main__":
         sys.exit(1)
 
 
+def cli():
+    """Synchronous entrypoint for console_scripts."""
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Shutting down...")
+    except Exception as e:
+        logger.error(f"Fatal error: {e}", exc_info=True)
+        sys.exit(1)
+
+
 

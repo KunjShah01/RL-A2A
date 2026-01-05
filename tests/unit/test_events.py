@@ -27,5 +27,6 @@ def test_eventbus_async_emit():
     async def runner():
         await bus.emit(Event(event_type=EventType.TASK_CREATED, payload={"val": 7}))
 
-    asyncio.get_event_loop().run_until_complete(runner())
+    import asyncio as _asyncio
+    _asyncio.run(runner())
     assert results == [7]

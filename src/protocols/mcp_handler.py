@@ -5,10 +5,11 @@ Enhanced MCP protocol handler for RL-A2A v2.0
 
 import logging
 from typing import Dict, Any, Optional, List
+
+from src.utils.config import Config
 try:
     from mcp.server import Server
     from mcp.types import Tool, Resource, TextContent
-    import mcp.types as types
     MCP_AVAILABLE = True
 except ImportError:
     MCP_AVAILABLE = False
@@ -106,7 +107,7 @@ class MCPHandler:
             ]
         
         @self.server.call_tool()
-        async def handle_call_tool(name: str, arguments: dict) -> List[types.TextContent]:
+        async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             """Handle MCP tool calls"""
             try:
                 if name == "create_agent":
@@ -161,7 +162,6 @@ class MCPHandler:
         async def handle_read_resource(uri: str) -> str:
             """Handle resource read requests"""
             if uri == "rl-a2a://system/config":
-                from ...utils.config import Config
                 import json
                 return json.dumps(Config.to_dict(), indent=2)
             
@@ -189,8 +189,8 @@ class MCPHandler:
             return {"error": "Agent registry not available"}
         
         import uuid
-                from ...core.agent import Agent, AgentStatus
-        from ...identity.key_manager import KeyManager
+        from src.core.agent import Agent, AgentStatus
+        from src.identity.key_manager import KeyManager
         
         name = arguments.get("name", "Unknown")
         role = arguments.get("role", "general")
@@ -243,7 +243,7 @@ class MCPHandler:
         
         # Emit event for message sending
         if self.event_bus:
-                from ...core.events import Event, EventType
+            from src.core.events import Event, EventType
             event = Event(
                 event_type=EventType.MESSAGE_SENT,
                 payload={
@@ -262,12 +262,11 @@ class MCPHandler:
     
     async def _handle_get_system_status(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Handle get_system_status tool"""
-                from ...utils.config import Config
-        
+        # use top-level Config imported at module level
         agent_count = 0
         if self.agent_registry:
             agent_count = self.agent_registry.count()
-        
+
         return {
             "version": Config.VERSION,
             "system_name": Config.SYSTEM_NAME,
@@ -298,4 +297,3 @@ class MCPHandler:
     async def run(self):
         """Run MCP server"""
         await self.server.run()
-
