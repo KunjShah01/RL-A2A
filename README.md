@@ -8,6 +8,8 @@ Reinforcement Learning Agent-to-Agent Communication Platform.
 
 This repository contains the RL-A2A platform: API server, orchestration, learning components, and utilities.
 
+Write-up: [Secure Multi-AI Agent Systems: The Next Generation (RL-A2A Enhanced)](https://kunjshah.in/writing/rl-a2a-enhanced-the-next-generation-of-secure-multi-ai-agent). Built by [Kunj Shah](https://kunjshah.in).
+
 Quick links
 
 - Docs: `./docs/`
